@@ -69,6 +69,7 @@
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+	<Compile Include="AssemblyInfo.cs" />
     <Compile Include="AnimatedContainer.cs" />
     <Compile Include="AnimatedEngine.cs" />
     <Compile Include="AnimatedRCS.cs" />
