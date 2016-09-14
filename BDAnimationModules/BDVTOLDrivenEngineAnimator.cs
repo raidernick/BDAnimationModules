@@ -56,18 +56,18 @@ namespace BDAnimationModules
 				{
 					if(HighLogic.LoadedSceneIsFlight)
 					{
-						vtolEnginesTorque += Mathf.Abs(Mathf.Sin(vtolEngine.currentAngle*Mathf.Deg2Rad) * vtolEngine.part.FindModuleImplementing<ModuleEngines>().finalThrust * Vector3.Distance(vtolEngine.thrustPosition, vessel.findWorldCenterOfMass()));
+						vtolEnginesTorque += Mathf.Abs(Mathf.Sin(vtolEngine.currentAngle*Mathf.Deg2Rad) * vtolEngine.part.FindModuleImplementing<ModuleEngines>().finalThrust * Vector3.Distance(vtolEngine.thrustPosition, vessel.CoM));
 					}
 					else
 					{
-						//vtolEnginesTorque += Mathf.Sin(vtolEngine.currentAngle * vtolEngine.part.FindModuleImplementing<ModuleEngines>().maxThrust * Vector3.Distance(vtolEngine.thrustPosition, vessel.findWorldCenterOfMass()));
-					}
-				}
+                        //vtolEnginesTorque += Mathf.Sin(vtolEngine.currentAngle * vtolEngine.part.FindModuleImplementing<ModuleEngines>().maxThrust * Vector3.Distance(vtolEngine.thrustPosition, vessel.CoM));
+                    }
+                }
 				
 				
 				if(HighLogic.LoadedSceneIsFlight) 
 				{
-					float engineThrust = vtolEnginesTorque / Vector3.Distance(part.FindModelTransform(engine.thrustVectorTransformName).position, vessel.findWorldCenterOfMass());
+					float engineThrust = vtolEnginesTorque / Vector3.Distance(part.FindModelTransform(engine.thrustVectorTransformName).position, vessel.CoM);
 					engine.minThrust = engineThrust;
 					engine.maxThrust = engineThrust;
 				}
