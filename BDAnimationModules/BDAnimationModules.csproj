@@ -75,6 +75,14 @@
     <Compile Include="AnimatedRCS.cs" />
     <Compile Include="BDAnimDec.cs" />
     <Compile Include="BDAnimDecAnchor.cs" />
+    <Compile Include="FSUsed\BDFSanimateGeneric.cs" />
+    <Compile Include="FSUsed\BDFSdebugMessages.cs" />
+    <Compile Include="FSUsed\BDFSGUIPopup.cs" />
+    <Compile Include="FSUsed\BDFSGUIwindowID.cs" />
+    <Compile Include="FSUsed\BDFSmeshSwitch.cs" />
+    <Compile Include="FSUsed\BDFSnodeLoader.cs" />
+    <Compile Include="FSUsed\BDFStextureSwitch2.cs" />
+    <Compile Include="FSUsed\BDFStools.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="GenericLoopAnimation.cs" />
     <Compile Include="BDEngineCase.cs" />
