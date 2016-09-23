@@ -10,7 +10,7 @@ http://creativecommons.org/licenses/by-sa/4.0/
 */
 namespace BDAnimationModules
 {
-    public class BDAnimatedDec : ModuleDecouple
+    public class BDAnimatedDec : ModuleDecouple, IScalarModule
     {
         [KSPField]
         public string animationName = "";
@@ -23,6 +23,9 @@ namespace BDAnimationModules
 
         [KSPField]
         public int layer = 0;
+
+        [KSPField]
+        public string moduleID = "bdanimatedDecoupler";
 
         protected Animation anim;
 
@@ -184,6 +187,15 @@ namespace BDAnimationModules
                 return (object)part.FindAttachNode(this.explosiveNodeID).attachedPart == null || isResetting || isDecoupling ? 1f : 0f;
             }
         }
+
+        public string ScalarModuleID
+        {
+            get
+            {
+                return this.moduleID;
+            }
+        }
+
 
         public EventData<float, float> OnMoving
         {

@@ -11,7 +11,7 @@ http://creativecommons.org/licenses/by-sa/4.0/
 
 namespace BDAnimationModules
 {
-    public class BDAnimDecAnchor : ModuleAnchoredDecoupler
+    public class BDAnimDecAnchor : ModuleAnchoredDecoupler, IScalarModule
     {
         [KSPField]
         public string animationName = "";
@@ -32,6 +32,9 @@ namespace BDAnimationModules
 
         [KSPField]
         public int layer = 0;
+
+        [KSPField]
+        public string moduleID = "bdanimatedAnchoredDecoupler";
 
         public BDAnimDecAnchor() :
         base()
@@ -193,6 +196,14 @@ namespace BDAnimationModules
             get
             {
                 return (isResetting || isDecoupling) ? 1f : 0f;
+            }
+        }
+
+        public string ScalarModuleID
+        {
+            get
+            {
+                return this.moduleID;
             }
         }
 
