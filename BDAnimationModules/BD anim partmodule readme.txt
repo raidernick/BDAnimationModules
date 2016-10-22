@@ -44,7 +44,7 @@ showInfo = true
 
 MODULE
 {
-	name = FSmeshSwitch
+	name = BDFSmeshSwitch
 	// If there are multiple instances of this module in a part, they must each have a unique module ID to avoid conflicts
 	moduleID = 0
 	buttonName = Next Mesh //button display name for mesh switch
