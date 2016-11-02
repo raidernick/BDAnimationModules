@@ -445,9 +445,9 @@ namespace BDAnimationModules
 			}
 			RefreshTweakables();
 
-			wheelColliders = part.FindModelComponents<WheelCollider>();
+			wheelColliders = part.FindModelComponents<WheelCollider>().ToArray();
 
-			previousState = CurrentState;
+            previousState = CurrentState;
 			part.SendMessage("GeometryPartModuleRebuildMeshData");
 
 			if(state != StartState.Editor)
