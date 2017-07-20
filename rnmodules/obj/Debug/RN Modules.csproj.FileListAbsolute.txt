@@ -1,0 +1,32 @@
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\RNModules.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\RNModules.pdb
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Assembly-CSharp.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\UnityEngine.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\TrackIRUnity.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\UnityEngine.UI.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\System.Xml.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\KSPAssets.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Mono.Cecil.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\TDx.TDxInput.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Mono.Security.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\UnityEngine.xml
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\obj\Debug\RNModules.dll
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\obj\Debug\RNModules.pdb
+C:\Users\Nicolae\Documents\Visual Studio 2015\Projects\rnmodules\obj\Debug\RN Modules.csprojResolveAssemblyReference.cache
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\RNModules.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\RNModules.pdb
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Assembly-CSharp.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\UnityEngine.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\TrackIRUnity.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\UnityEngine.UI.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\System.Xml.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\KSPAssets.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Mono.Cecil.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\TDx.TDxInput.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\Mono.Security.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\bin\Debug\UnityEngine.xml
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\obj\Debug\RN Modules.csprojResolveAssemblyReference.cache
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\obj\Debug\RNModules.dll
+C:\Users\nic12\Documents\Visual Studio 2015\Projects\rnmodules\obj\Debug\RNModules.pdb

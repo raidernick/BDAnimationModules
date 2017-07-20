@@ -1,0 +1,18 @@
+MODULE
+{
+	name = RNDescentBurn
+	TemperatureThreshold = 200
+	BurnIntensity = 0.0001
+}
+
+MODULE
+{
+	name = RNLandingEngine
+	IgnitionAltitude = 7
+}
+
+MODULE
+{
+       name = RNDescentMode
+       DescentModeCoM = 0, -0.4, -0.57
+}
