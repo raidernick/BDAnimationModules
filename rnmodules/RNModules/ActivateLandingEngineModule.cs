@@ -8,25 +8,42 @@ namespace RNModules
 	{
 		[KSPField(isPersistant = true, guiName = "Auto-Ignition Altitude", guiActive = true)]
 		public float IgnitionAltitude;
+        private bool engineIsFX = false;
+        private bool engineActivated;
+        private ModuleEngines modEng = null;
+        private ModuleEnginesFX modEngFX = null;
+        private IList<ModuleEngines> numEngines;
+        private IList<ModuleEnginesFX> numEngines2;
 
-		private bool engineActivated;
-
-		private IList<ModuleEngines> numEngines;
-
-		public override void OnAwake()
+        public override void OnAwake()
 		{
 			base.OnAwake();
 			if (HighLogic.LoadedSceneIsFlight)
 			{
 				Debug.Log(string.Format("RNLandingEngine::OnAwake, IgnitionAltitude = {0}", IgnitionAltitude));
                 numEngines = part.FindModulesImplementing<ModuleEngines>();
-				Debug.Log(string.Format("Found {0} engine modules", (numEngines != null) ? numEngines.Count : -1));
-			}
+                numEngines2 = part.FindModulesImplementing<ModuleEnginesFX>();
+
+                foreach (var me in this.part.FindModulesImplementing<ModuleEngines>())
+                {
+                    modEng = me;
+                    engineIsFX = false;
+                }
+
+                foreach (var me in this.part.FindModulesImplementing<ModuleEnginesFX>())
+                {
+                    modEngFX = me;
+                    engineIsFX = true;
+                }
+
+                Debug.Log(string.Format("Found {0} engine modules", (numEngines != null) ? numEngines.Count : -1));
+                Debug.Log(string.Format("Found {0} FX engine modules", (numEngines2 != null) ? numEngines2.Count : -1));
+            }
 		}
 
 		public void FixedUpdate()
 		{
-			if (HighLogic.LoadedSceneIsFlight && vessel.situation == Vessel.Situations.FLYING)
+            if (HighLogic.LoadedSceneIsFlight && vessel.situation == Vessel.Situations.FLYING)
 			{
 				if (!engineActivated)
 				{
@@ -47,8 +64,14 @@ namespace RNModules
 								current.OnActive();
 								Debug.Log("Activating engine.");
 							}
-                            engineActivated = true;
-						}
+                            foreach (ModuleEngines current in numEngines2)
+                            {
+                                current.OnActive();
+                                Debug.Log("Activating FX engine.");
+                            }
+                            if (engineIsFX) modEngFX.Activate();
+                            else modEng.Activate();
+                        }
 					}
 				}
 			}
