@@ -4,13 +4,13 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("1.1.5.1")]
+[assembly: AssemblyVersion("1.1.5.2")]
 [assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default | DebuggableAttribute.DebuggingModes.DisableOptimizations | DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints | DebuggableAttribute.DebuggingModes.EnableEditAndContinue)]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyFileVersion("1.1.5.1")]
+[assembly: AssemblyFileVersion("1.1.5.2")]
 [assembly: AssemblyProduct("RNModules")]
 [assembly: AssemblyTitle("RNModules")]
 [assembly: AssemblyTrademark("")]
