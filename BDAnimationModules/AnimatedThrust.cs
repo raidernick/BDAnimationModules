@@ -45,10 +45,11 @@ namespace BDAnimationModules
 
 			}
 		}
-		
-		
-		public override void OnStart(PartModule.StartState state)
-		{
+
+
+        //public override void OnStart(PartModule.StartState state)
+        void Start()
+        {
 			animStates = Utils.SetUpAnimation(ThrustAnimationName, this.part);
 			
 			foreach(ModuleEngines me in this.part.FindModulesImplementing<ModuleEngines>())
@@ -86,7 +87,8 @@ namespace BDAnimationModules
 		
 		public override void OnUpdate()
 		{
-			if(!isEngineFX)
+            HideGimbalButtons();
+            if (!isEngineFX)
 			{
 				foreach(AnimationState anim in animStates)
 				{
@@ -122,13 +124,21 @@ namespace BDAnimationModules
 			{
 				foreach(ModuleGimbal mgg in this.part.FindModulesImplementing<ModuleGimbal>())
 				{
+                    Debug.Log("Disabling gimbal actions");
+                    // Use the first gimbalLock as a flag to see if this has already been done
+                    // Needed because apparently KSP resets all the gimballocks when the engine is ignited
+                    if (!mgg.Fields["gimbalLock"].guiActive)
+                        return;
 					mgg.Actions["FreeAction"].active = false;	
 					mgg.Actions["LockAction"].active = false;
 					mgg.Actions["ToggleAction"].active = false;
-					mgg.Fields["gimbalLock"].guiActive = false;
-					mgg.Fields["gimbalLock"].guiActiveEditor = false;
+
+                    mgg.Fields["gimbalLock"].guiActive = false;
+                    mgg.Fields["gimbalLock"].guiActiveEditor = false;
+
 					mgg.Fields["gimbalLimiter"].guiActive = false;
 					mgg.Fields["gimbalLimiter"].guiActiveEditor = false;
+
 					//mgg.Events["LockGimbal"].active = false;
 					//mgg.Events["LockGimbal"].guiActiveEditor = false;
 					//mgg.Events["FreeGimbal"].active = false;
