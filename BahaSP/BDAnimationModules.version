@@ -1,6 +1,6 @@
 {
     "NAME":"BD Animation Modules",
-    "URL":"http://raw.githubusercontent.com/raidernick/BDAnimationModules/master/GameData/BahaSP/BDAnimationModules.version",
+    "URL":"https://raw.githubusercontent.com/raidernick/BDAnimationModules/master/BahaSP/BDAnimationModules.version",
     "DOWNLOAD":"https://github.com/raidernick/BDAnimationModules/releases",
     "GITHUB":
     {
@@ -12,8 +12,8 @@
     {
         "MAJOR": 0,
         "MINOR": 6,
-        "PATCH": 4,
-        "BUILD": 9
+        "PATCH": 5,
+        "BUILD": 0
     },
     "KSP_VERSION":
     {
