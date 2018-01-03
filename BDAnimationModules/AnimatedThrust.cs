@@ -124,7 +124,7 @@ namespace BDAnimationModules
 			{
 				foreach(ModuleGimbal mgg in this.part.FindModulesImplementing<ModuleGimbal>())
 				{
-                    Debug.Log("Disabling gimbal actions");
+                    //Debug.Log("Disabling gimbal actions");
                     // Use the first gimbalLock as a flag to see if this has already been done
                     // Needed because apparently KSP resets all the gimballocks when the engine is ignited
                     if (!mgg.Fields["gimbalLock"].guiActive)
