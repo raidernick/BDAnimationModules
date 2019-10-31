@@ -189,12 +189,20 @@ class FSBDwheel : PartModule
     private float finalBrakeTorque = 0f;
 
     private Animation anim;    
-    private FSBDWheelList wheelList = new FSBDWheelList();
+    private WheelList wheelList = new WheelList();
     private bool boundsColliderRemoved = false;
     private float animNormalizedTime = 0f;    
     
-	private BDAnimationModules.BDAdjustableLandingGear alg;
-    
+
+    FSGUIPopup popup;
+    PopupElement motorToggleElement;
+    PopupElement motorReverseElement;
+    PopupElement suspensionSpringElement;
+    PopupElement suspensionDamperElement;
+    PopupElement suspensionTargetPositionElement;
+    PopupElement suspensionUpdateElement;
+    PopupElement suspensionDistanceElement;
+    PopupElement wheelRadiusElement;
     //Light brakeLight;
     Transform brakeEmissiveObject;
 
@@ -290,8 +298,6 @@ class FSBDwheel : PartModule
         Events["DisableMotorEvent"].guiActiveEditor = true;
     }
 
-
-
     [KSPEvent(guiName = "Disable Motor", guiActive = false, guiActiveEditor=true)]
     public void DisableMotorEvent()
     {
@@ -301,8 +307,6 @@ class FSBDwheel : PartModule
         Events["EnableMotorEvent"].guiActiveEditor = true;
         Events["DisableMotorEvent"].guiActiveEditor = false;
     }
-
-
 
     private void animate(string mode)
     {
@@ -402,17 +406,16 @@ class FSBDwheel : PartModule
     {
         wheelList.forwardStiffness -= 1f;
     }
-	/*
     [KSPEvent(guiName = "adjust suspension (d)", guiActive = false)]
     public void suspensionGUIEvent()
     {
         popup.showMenu = !popup.showMenu;
     }
-	 */
+
     #endregion
 
     #region GUI popup functions
-	/*
+
     private void popupToggleMotor()
     {
         motorEnabled = !motorEnabled;
@@ -420,7 +423,7 @@ class FSBDwheel : PartModule
 
         foreach (Part p in part.symmetryCounterparts)
         {
-            FSwheel wheel = p.GetComponent<FSwheel>();
+            FSBDwheel wheel = p.GetComponent<FSBDwheel>();
             if (wheel != null)
             {
                 wheel.motorEnabled = motorEnabled;
@@ -428,9 +431,7 @@ class FSBDwheel : PartModule
             }
         }
     }
-	 */
-	
-	/*
+
     private void popupToggleReverseMotor()
     {
         motorStartsReversed = !motorStartsReversed;
@@ -446,8 +447,7 @@ class FSBDwheel : PartModule
             }
         }
     }
-    */
-	/*
+
     private void popupUpdateSuspension()
     {
         overrideModelSpringValues = true;
@@ -460,7 +460,7 @@ class FSBDwheel : PartModule
         wheelList.radius = wheelColliderRadius;
         wheelList.suspensionDistance = wheelColliderSuspensionDistance;
     }
-	 */
+
     #endregion
 
     public void setBrakeLight(bool _brakesEngaged)
@@ -519,7 +519,7 @@ class FSBDwheel : PartModule
         }
         catch
         {
-            Debug.Log("FSwheel: Could not set deployment state " + deploymentState);
+            Debug.Log("FSBDwheel: Could not set deployment state " + deploymentState);
         }
 
         #region animation
@@ -566,33 +566,31 @@ class FSBDwheel : PartModule
                     if (collider != null)
                     {
                         colliderList.Add(collider);
+
+                        Transform wheelMeshTransform = part.FindModelTransform(wheelMeshName + suffix);
+                        if (wheelMeshTransform != null)
+                        {
+                            wheelMeshList.Add(wheelMeshTransform);
+                        }
+                        else
+                        {
+                            Debug.Log("FSBDwheel: missing wheel mesh " + wheelMeshName + suffix);
+                        }
+                        Transform suspensionTransform = part.FindModelTransform(suspensionParentName + suffix);
+                        if (suspensionTransform != null)
+                        {
+                            suspensionList.Add(suspensionTransform);
+                        }
+                        else
+                        {
+                            Debug.Log("FSBDwheel: missing suspensionParent " + suspensionParentName + suffix);
+                        }
                     }
                 }
                 else
                 {
-                    Debug.Log("FSwheel: missing wheel collider " + wheelColliderName + suffix);
+                    Debug.Log("FSBDwheel: missing wheel collider " + wheelColliderName + suffix);
                 }
-
-				Transform wheelMeshTransform = part.FindModelTransform(wheelMeshName + suffix);
-				if (wheelMeshTransform != null)
-				{
-					wheelMeshList.Add(wheelMeshTransform);
-				}
-				else
-				{
-					Debug.Log("FSwheel: missing wheel mesh " + wheelMeshName + suffix);
-				}
-
-				Transform suspensionTransform = part.FindModelTransform(suspensionParentName + suffix);
-				if (suspensionTransform != null)
-				{
-					suspensionList.Add(suspensionTransform);
-				}
-				else
-				{
-					Debug.Log("FSwheel: missing suspensionParent " + suspensionParentName + suffix);
-				}
-
             }
 
             wheelList.Create(colliderList, wheelMeshList, suspensionList);
@@ -605,22 +603,22 @@ class FSBDwheel : PartModule
             }
 
             // set the motor direction based on the first found wheelColliders orientation
-            //Debug.Log("FSwheel: wheelist count is " + wheelList.wheels.Count);
+            //Debug.Log("FSBDwheel: wheelist count is " + wheelList.wheels.Count);
             if (wheelList.wheels.Count > 0)
             {
-                Debug.Log("FSwheel: reversemotorset: " + reverseMotorSet);
+                Debug.Log("FSBDwheel: reversemotorset: " + reverseMotorSet);
                 if (!reverseMotorSet) //run only the first time the craft is loaded
                 {
                     float dot = Vector3.Dot(wheelList.wheels[0].wheelCollider.transform.forward, vessel.ReferenceTransform.up); // up is forward
                     if (dot < 0) // below 0 means the engine is on the left side of the craft
                     {
                         reverseMotor = true;
-                        //Debug.Log("FSwheel: Reversing motor, dot: " + dot);
+                        //Debug.Log("FSBDwheel: Reversing motor, dot: " + dot);
                     }
                     else
                     {
                         reverseMotor = false;
-                        //Debug.Log("FSwheel: Motor reversing skipped, dot: " + dot);
+                        //Debug.Log("FSBDwheel: Motor reversing skipped, dot: " + dot);
                     }
                     if (motorStartsReversed)
                         reverseMotor = !reverseMotor;
@@ -668,8 +666,8 @@ class FSBDwheel : PartModule
             #endregion                     
 
             #region GUI popup
-			/*
-            popup = new FSGUIPopup(part, "FSwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Suspension Settings:"));
+
+            popup = new FSGUIPopup(part, "FSBDwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Suspension Settings:"));
             popup.useInFlight = true;
             wheelRadiusElement = new PopupElement("Radius", wheelColliderRadius.ToString());
             suspensionDistanceElement = new PopupElement("Distance", wheelColliderSuspensionDistance.ToString());
@@ -684,7 +682,7 @@ class FSBDwheel : PartModule
             
             suspensionUpdateElement = new PopupElement(new PopupButton("Update", 0f, popupUpdateSuspension));
             popup.sections[0].elements.Add(suspensionUpdateElement);
-			 */
+
             #endregion
 
             if (brakeEmissiveObjectName != string.Empty)
@@ -703,33 +701,31 @@ class FSBDwheel : PartModule
                 }
                 else
                 {
-                    for (int i = 0; i < wheelList.wheels.Count; i++)
-                    {
-                        wheelList.wheels[i].smokeFX = new FSBDparticleFX(wheelList.wheels[i].fxLocation, smokeFXtexture);
-                        wheelList.wheels[i].smokeFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.8f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.5f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.1f);
-                        wheelList.wheels[i].smokeFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+                    //for (int i = 0; i < wheelList.wheels.Count; i++)
+                    //{
+                        //KSP 1.8
+                        //wheelList.wheels[i].smokeFX = new Firespitter.FSparticleFX(wheelList.wheels[i].fxLocation, smokeFXtexture);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor0 = new Color(1.0f, 1.0f, 1.0f, 0.8f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor1 = new Color(1.0f, 1.0f, 1.0f, 0.5f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor2 = new Color(1.0f, 1.0f, 1.0f, 0.2f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor3 = new Color(1.0f, 1.0f, 1.0f, 0.1f);
+                        //wheelList.wheels[i].smokeFX.AnimatorColor4 = new Color(1.0f, 1.0f, 1.0f, 0.0f);
 
-                        wheelList.wheels[i].smokeFX.EmitterMinSize = 0.3f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.5f;
-                        wheelList.wheels[i].smokeFX.EmitterMinEnergy = 0.1f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.3f;
-                        wheelList.wheels[i].smokeFX.EmitterMinEmission = 0f;
-                        wheelList.wheels[i].smokeFX.EmitterMaxEmission = 0f;
-                        wheelList.wheels[i].smokeFX.AnimatorSizeGrow = 0.1f;
+                        //wheelList.wheels[i].smokeFX.EmitterMinSize = 0.3f;
+                        //wheelList.wheels[i].smokeFX.EmitterMaxSize = 0.5f;
+                        //wheelList.wheels[i].smokeFX.EmitterMinEnergy = 0.1f;
+                        //wheelList.wheels[i].smokeFX.EmitterMaxEnergy = 0.3f;
+                        //wheelList.wheels[i].smokeFX.EmitterMinEmission = 0f;
+                        //wheelList.wheels[i].smokeFX.EmitterMaxEmission = 0f;
+                        //wheelList.wheels[i].smokeFX.AnimatorSizeGrow = 0.1f;
                         
-                        wheelList.wheels[i].smokeFX.setupFXValues();
+                        //wheelList.wheels[i].smokeFX.setupFXValues();
+                        //KSP 1.8                    }
+                    //}
                     }
                 }
-            }
-
+            
             #endregion
-			
-			
-			//alg
-			alg = GetComponent<BDAnimationModules.BDAdjustableLandingGear>();
 
         }        
 
@@ -828,11 +824,8 @@ class FSBDwheel : PartModule
         }
     }
 
-	public bool wheelHit = false;
-	public Vector3 surfaceNormal = Vector3.zero;
     private void updateSuspension()
     {
-		wheelHit = false;
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
             if (wheelList.wheels[i].useSuspension)
@@ -841,15 +834,13 @@ class FSBDwheel : PartModule
                 WheelCollider wheelCollider = wheelList.wheels[i].wheelCollider;
                 Transform suspensionParent = wheelList.wheels[i].suspensionParent;                
 
-                if(Physics.Raycast(wheelCollider.transform.position, -wheelCollider.transform.up, out raycastHit, (wheelCollider.suspensionDistance + wheelCollider.radius) * part.rescaleFactor * alg.algScale, 557057))
+                if (Physics.Raycast(wheelCollider.transform.position, -wheelCollider.transform.up, out raycastHit, (wheelCollider.suspensionDistance + wheelCollider.radius) * part.rescaleFactor))
                 {
-                    suspensionParent.position = raycastHit.point + wheelCollider.transform.up * wheelCollider.radius * part.rescaleFactor * alg.algScale;
-					wheelHit = true;
-					surfaceNormal = raycastHit.normal;
+                    suspensionParent.position = raycastHit.point + wheelCollider.transform.up * wheelCollider.radius * part.rescaleFactor;
                 }
                 else
                 {
-                    suspensionParent.position = wheelCollider.transform.position - wheelCollider.transform.up * (wheelCollider.suspensionDistance * part.rescaleFactor * alg.algScale);
+                    suspensionParent.position = wheelCollider.transform.position - wheelCollider.transform.up * (wheelCollider.suspensionDistance * part.rescaleFactor);
                 }
             }
         }
@@ -977,16 +968,8 @@ class FSBDwheel : PartModule
     {
         if (hasMotor && motorEnabled && deploymentStateEnum == DeploymentStates.Deployed)
         {
-			//reverse motor fix
-			Vector3 vesselWheelPos = vessel.ReferenceTransform.InverseTransformPoint(transform.position);
-			float vPosMult = vesselWheelPos.x < .2f ? 1 : -1;
-			if(alg && alg.isMirrored && !alg.mirrorDeployedWheel)
-			{
-				vPosMult *= -1;
-			}
-
             float speedModifier = Mathf.Max(0f, -(((float)vessel.horizontalSrfSpeed - maxSpeed) / maxSpeed));
-			float throttleInput = vessel.ctrlState.wheelThrottle * vPosMult * speedModifier;
+            float throttleInput = vessel.ctrlState.wheelThrottle * speedModifier;
             if (reverseMotor)
                 throttleInput *= -1;
             double resourceConsumed = (double)Mathf.Abs(resourceConsumptionRate * throttleInput) * (double)TimeWarp.deltaTime;
@@ -1000,9 +983,7 @@ class FSBDwheel : PartModule
                 }
             }
             if (throttleInput < 0f)
-			{
                 throttleInput *= nerfNegativeTorque; // fixes negative values being overpowered
-			}
             wheelList.motorTorque = throttleInput * motorTorque;            
         }
         else
@@ -1077,51 +1058,65 @@ class FSBDwheel : PartModule
         fxLevel *= deltaRPM / 200f;
         part.Effect("touchdown", fxLevel);
         //Debug.Log("wheels: " + wheelList.wheels.Count + ", current: " + wheelNumber);
-        wheelList.wheels[wheelNumber].screechCountdown = 0.3f;
+        wheelList.wheels[wheelNumber].screechCountdown = 0.5f;
         //Debug.Log(Vector3.Distance(vessel.ReferenceTransform.position, wheelList.wheels[wheelNumber].smokeFX.gameObject.transform.position));
         // play one shot audio                
     }
 
     private void updateScreechEffect(int wheelNumber)
     {
-        if (wheelList.wheels[wheelNumber].screechCountdown > 0f)
-        {
+        //KSP 1.8
+        //if (wheelList.wheels[wheelNumber].screechCountdown > 0f)
+        //{
             // emit particles
-            if (wheelList.wheels[wheelNumber].wheelCollider.isGrounded)
-            {
-                if (useCustomParticleFX)
-                {
-					wheelList.wheels[wheelNumber].smokeFX.pEmitter.rndVelocity = new Vector3(1f,1f,1f);
-					wheelList.wheels[wheelNumber].smokeFX.pEmitter.worldVelocity = (-FlightGlobals.getGeeForceAtPosition(transform.position).normalized * 3);
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate * fxLevel;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;
-                }
-                else
-                {
-                    part.Effect("tireSmoke", fxLevel);
-                }
-            }
-            else
-            {
-                if (useCustomParticleFX)
-                {
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
-                    wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
-                }
-            }
-            //smokeFX
-            wheelList.wheels[wheelNumber].screechCountdown -= TimeWarp.deltaTime;
-        }
-        else
-        {
-            if (useCustomParticleFX)
-            {
-                wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
-                wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
-            }
-        }
+            //if (wheelList.wheels[wheelNumber].wheelCollider.isGrounded)
+            //{
+            //    if (useCustomParticleFX)
+            //    {
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = particleEmissionRate * fxLevel;
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = particleEmissionRate * fxLevel;
+            //    }
+            //    else
+            //    {
+            //        part.Effect("tireSmoke", fxLevel);
+            //    }
+            //}
+            //else
+            //{
+            //    if (useCustomParticleFX)
+            //    {
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
+            //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
+            //    }
+            //}
+            ////smokeFX
+            //wheelList.wheels[wheelNumber].screechCountdown -= TimeWarp.deltaTime;
+        //}
+        //else
+        //{
+        //    if (useCustomParticleFX)
+        //    {
+        //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.minEmission = 0f;
+        //        wheelList.wheels[wheelNumber].smokeFX.pEmitter.maxEmission = 0f;
+        //    }
+        //}
+        //KSP 1.8
     }
 
-    
+    public void OnGUI()
+    {
+        if (debugMode && HighLogic.LoadedSceneIsFlight)
+        {
+            //float rpmOverSpeed = currentRPM / (float)vessel.srf_velocity.magnitude;
+            //GUI.Label(new Rect(300f, 300f, 400f, 100f), "Speed: " + Mathf.Round((float)vessel.srf_velocity.magnitude).ToString() + ", rpm: " + currentRPM + " speed / RP: " + rpmOverSpeed);
+            
+            //if (screechCountdown > 0f)
+            //{                
+            //    GUI.Label(new Rect(300f, 350f, 400f, 100f), "Screeech! grounded: " + wheelList.wheels[0].wheelCollider.isGrounded);
+            //}            
+            //wheelList.wheels[0].wheelCollider.isGrounded
+            popup.popup();
+        }
+    }
 
 }
