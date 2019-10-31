@@ -95,13 +95,13 @@ public class BDFSGUIPopup
         windowRect.y += (moduleID * windowRect.height) + 20;
     }
 
-    private void drawElement(PopupElement element)
+    private void DrawElement(PopupElement element)
     {
         if (element.showElement)
         {
             if (element.style == null)
             {
-                element.setStyle(GUI.skin.textArea); //GUI.skin.textArea
+                element.SetStyle(GUI.skin.textArea); //GUI.skin.textArea
             }
             int activeElements = 0;
             if (element.useTitle) activeElements++;
@@ -176,13 +176,13 @@ public class BDFSGUIPopup
         }
     }
 
-    private void drawWindow(int windowID)
+    private void DrawWindow(int windowID)
     {
         windowRect.height = marginTop + marginBottom - lineSpacing;
         lastSectionTop = 0f;
         foreach (PopupSection section in sections)
         {
-            drawSection(section);
+            DrawSection(section);
             lastSectionTop += lastElementTop;
         }
 
@@ -197,7 +197,7 @@ public class BDFSGUIPopup
         GUI.DragWindow();
     }
 
-    private void drawSection(PopupSection section)
+    private void DrawSection(PopupSection section)
     {
         if (section.showSection)
         {
@@ -206,7 +206,7 @@ public class BDFSGUIPopup
             //windowRect.height = ((float)section.elements.Count * (elementSize.y + lineSpacing)) + marginTop + marginBottom;
             for (int i = 0; i < section.elements.Count; i++)
             {
-                drawElement(section.elements[i]);
+                DrawElement(section.elements[i]);
                 windowRect.height += section.elements[i].height + lineSpacing;
             }
         }
@@ -220,7 +220,7 @@ public class BDFSGUIPopup
         //}
     }
 
-    public void popup()
+    public void Popup()
     {
         if (HighLogic.LoadedSceneIsEditor)
         {
@@ -228,7 +228,7 @@ public class BDFSGUIPopup
             {
                 if (showMenu)
                 {
-                    windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
+                    windowRect = GUI.Window(GUIlayer, windowRect, DrawWindow, windowTitle);
                 }
             }
             else if (useInActionEditor)
@@ -237,7 +237,7 @@ public class BDFSGUIPopup
                 {
                     if (showMenu)
                     {
-                        windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
+                        windowRect = GUI.Window(GUIlayer, windowRect, DrawWindow, windowTitle);
                     }
 
                     showMenu = false;
@@ -270,14 +270,14 @@ public class BDFSGUIPopup
         {
             if (showMenu && parentPart.vessel.isActiveVessel)
             {
-                windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
+                windowRect = GUI.Window(GUIlayer, windowRect, DrawWindow, windowTitle);
             }
         }
         if (useInMenus && !HighLogic.LoadedSceneIsFlight && !HighLogic.LoadedSceneIsEditor)
         {
             if (showMenu)
             {
-                windowRect = GUI.Window(GUIlayer, windowRect, drawWindow, windowTitle);
+                windowRect = GUI.Window(GUIlayer, windowRect, DrawWindow, windowTitle);
             }
         }
         //return optionEnabled;        
@@ -328,12 +328,12 @@ public class PopupElement
     bool wordWrap = true;
     bool richText = true;    
 
-    public void setStyle(GUIStyle _baseStyle)
+    public void SetStyle(GUIStyle _baseStyle)
     {
-        setStyle(textColor, wordWrap, richText, _baseStyle);        
+        SetStyle(textColor, wordWrap, richText, _baseStyle);        
     }
 
-    public void setStyle(Color _textColor, bool _wordWrap, bool _richText, GUIStyle _baseStyle)
+    public void SetStyle(Color _textColor, bool _wordWrap, bool _richText, GUIStyle _baseStyle)
     {
         style = new GUIStyle(_baseStyle);
         style.normal.textColor = _textColor;
@@ -415,7 +415,7 @@ public class PopupButton
     Color normalColor = Color.white;
     Color disabledColor = Color.gray;
 
-    public void setupGUIStyle()
+    public void SetupGUIStyle()
     {
         style = new GUIStyle(); //GUI.skin.GetStyle("Button"));
         //style.normal.background = texture;
@@ -423,7 +423,7 @@ public class PopupButton
         style.alignment = TextAnchor.LowerCenter;
     }
 
-    public void setTexture(Texture2D normalTexture, Texture2D hoverTexture, Texture2D focusedTexture, Texture2D activeTexture)
+    public void SetTexture(Texture2D normalTexture, Texture2D hoverTexture, Texture2D focusedTexture, Texture2D activeTexture)
     {
         style.normal.background = normalTexture;
         style.hover.background = hoverTexture;
@@ -431,17 +431,17 @@ public class PopupButton
         style.active.background = activeTexture;
     }
 
-    public void setTexture(Texture2D allStatesTextures)
+    public void SetTexture(Texture2D allStatesTextures)
     {
-        setTexture(allStatesTextures, allStatesTextures, allStatesTextures, allStatesTextures);
+        SetTexture(allStatesTextures, allStatesTextures, allStatesTextures, allStatesTextures);
     }
 
-    private bool _styleSelected;
-    public bool styleSelected
+    private bool _StyleSelected;
+    public bool StyleSelected
     {
         set
         {
-            _styleSelected = value;
+            _StyleSelected = value;
             if (value)
             {
                 style.normal.textColor = selectedColor;
@@ -453,16 +453,16 @@ public class PopupButton
         }
         get
         {
-            return _styleSelected;
+            return _StyleSelected;
         }
     }
 
-    private bool _styleDisabled;
-    public bool styleDisabled
+    private bool _StyleDisabled;
+    public bool StyleDisabled
     {
         set
         {
-            _styleDisabled = value;
+            _StyleDisabled = value;
             if (value)
             {
                 style.normal.textColor = disabledColor;
@@ -474,7 +474,7 @@ public class PopupButton
         }
         get
         {
-            return _styleDisabled;
+            return _StyleDisabled;
         }
     }
 
@@ -533,7 +533,7 @@ public class PopupButton
         //setupGUIStyle();
     }
 
-    public void toggle(bool newState)
+    public void Toggle(bool newState)
     {
         toggleState = newState;
         if (newState)

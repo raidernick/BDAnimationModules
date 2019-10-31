@@ -38,7 +38,7 @@ class FSBDWheelList
             {
                 wheels[i].wheelMesh = wheelMeshes[i];
                 wheels[i].useRotation = true;
-                wheels[i].setupFxLocation();
+                wheels[i].SetupFxLocation();
             }
         }        
     }

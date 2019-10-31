@@ -44,7 +44,7 @@ class FSBDwheel : PartModule
         Deployed, Deploying, Retracted, Retracting, Stopped, unknown
     }
     private DeploymentStates _deploymentStateEnum = DeploymentStates.Deployed;
-    public DeploymentStates deploymentStateEnum
+    public DeploymentStates DeploymentStateEnum
     {
         get
         {
@@ -189,12 +189,12 @@ class FSBDwheel : PartModule
     private float finalBrakeTorque = 0f;
 
     private Animation anim;    
-    private WheelList wheelList = new WheelList();
+    private FSBDWheelList wheelList = new FSBDWheelList();
     private bool boundsColliderRemoved = false;
-    private float animNormalizedTime = 0f;    
-    
+    private float animNormalizedTime = 0f;
 
-    FSGUIPopup popup;
+
+    BDFSGUIPopup popup;
     PopupElement motorToggleElement;
     PopupElement motorReverseElement;
     PopupElement suspensionSpringElement;
@@ -239,13 +239,13 @@ class FSBDwheel : PartModule
     [KSPEvent(guiName = "Raise Gear", guiActive = true, guiActiveEditor=true, guiActiveUnfocused = true, unfocusedRange = 5f)]
     public void RaiseGear()
     {
-        animate("Retract");
+        Animate("Retract");
     }
 
     [KSPEvent(guiName = "Lower Gear", guiActive = true, guiActiveEditor=true, guiActiveUnfocused = true, unfocusedRange = 5f)]
     public void LowerGear()
     {
-        animate("Deploy");
+        Animate("Deploy");
     }
 
     [KSPAction("Reverse Motor")]
@@ -308,21 +308,21 @@ class FSBDwheel : PartModule
         Events["DisableMotorEvent"].guiActiveEditor = false;
     }
 
-    private void animate(string mode)
+    private void Animate(string mode)
     {
         if (anim != null)
         {            
             animTime = anim[animationName].normalizedTime;
 
-            if (deploymentStateEnum == DeploymentStates.Retracted) //fixes stupid unity animation timing (0 to 0.99 to 0)
+            if (DeploymentStateEnum == DeploymentStates.Retracted) //fixes stupid unity animation timing (0 to 0.99 to 0)
                 animTime = 1f;
 
             if (mode == "Deploy")
             {
-                if (deploymentStateEnum == DeploymentStates.Retracted)
+                if (DeploymentStateEnum == DeploymentStates.Retracted)
                     animTime = 1f;
                 animSpeed = -1f * customAnimationSpeed;
-                deploymentStateEnum = DeploymentStates.Deploying;
+                DeploymentStateEnum = DeploymentStates.Deploying;
                 if (startDeployEffect != string.Empty)
                 {
                     part.Effect(startDeployEffect);
@@ -330,10 +330,10 @@ class FSBDwheel : PartModule
             }
             else if (mode == "Retract")
             {
-                if (deploymentStateEnum == DeploymentStates.Deployed)
+                if (DeploymentStateEnum == DeploymentStates.Deployed)
                     animTime = 0f;
                 animSpeed = 1f * customAnimationSpeed;
-                deploymentStateEnum = DeploymentStates.Retracting;
+                DeploymentStateEnum = DeploymentStates.Retracting;
                 if (startRetractEffect != string.Empty)
                 {
                     part.Effect(startRetractEffect);
@@ -342,7 +342,7 @@ class FSBDwheel : PartModule
             else if (mode == "Stop")
             {
                 animSpeed = 0f;
-                deploymentStateEnum = DeploymentStates.Stopped;
+                DeploymentStateEnum = DeploymentStates.Stopped;
             }
 
             anim[animationName].normalizedTime = animTime;
@@ -350,7 +350,7 @@ class FSBDwheel : PartModule
             if (animSpeed != 0f)
             {                
                 anim.Play(animationName);
-                setBrakeLight(BrakeStatus.deploying);
+                SetBrakeLight(BrakeStatus.deploying);
             }
             else
             {
@@ -365,20 +365,20 @@ class FSBDwheel : PartModule
         if (param.type == KSPActionType.Activate)
         {
             brakesEngaged = true;
-            setBrakeLight(true);
+            SetBrakeLight(true);
         }
         else
         {
             brakesEngaged = false;
-            setBrakeLight(false);
+            SetBrakeLight(false);
         }
     }
 
     [KSPEvent(name = "brakesOn", guiActive = true, active = true, guiName = "Brakes On", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
-    public void brakesOnEvent()
+    public void BrakesOnEvent()
     {
         brakesEngaged = true;
-        setBrakeLight(BrakeStatus.on);
+        SetBrakeLight(BrakeStatus.on);
         Events["brakesOnEvent"].guiActive = false;
         Events["brakesOffEvent"].guiActive = true;
         Events["brakesOnEvent"].guiActiveEditor = false;
@@ -386,10 +386,10 @@ class FSBDwheel : PartModule
     }
 
     [KSPEvent(name = "brakesOff", guiActive = true, active = true, guiName = "Brakes Off", externalToEVAOnly = true, unfocusedRange = 6f, guiActiveUnfocused = true)]
-    public void brakesOffEvent()
+    public void BrakesOffEvent()
     {
         brakesEngaged = false;
-        setBrakeLight(BrakeStatus.off);
+        SetBrakeLight(BrakeStatus.off);
         Events["brakesOnEvent"].guiActive = true;
         Events["brakesOffEvent"].guiActive = false;
         Events["brakesOnEvent"].guiActiveEditor = true;
@@ -397,17 +397,17 @@ class FSBDwheel : PartModule
     }
 
     [KSPEvent(guiName = "increase friction (d)", guiActive = false)]
-    public void increaseFrictionEvent()
+    public void IncreaseFrictionEvent()
     {
         wheelList.forwardStiffness += 1f;
     }
     [KSPEvent(guiName = "decrease friction (d)", guiActive = false)]
-    public void decreaseFrictionEvent()
+    public void DecreaseFrictionEvent()
     {
         wheelList.forwardStiffness -= 1f;
     }
     [KSPEvent(guiName = "adjust suspension (d)", guiActive = false)]
-    public void suspensionGUIEvent()
+    public void SuspensionGUIEvent()
     {
         popup.showMenu = !popup.showMenu;
     }
@@ -416,10 +416,10 @@ class FSBDwheel : PartModule
 
     #region GUI popup functions
 
-    private void popupToggleMotor()
+    private void PopupToggleMotor()
     {
         motorEnabled = !motorEnabled;
-        motorToggleElement.buttons[0].toggle(motorEnabled);
+        motorToggleElement.buttons[0].Toggle(motorEnabled);
 
         foreach (Part p in part.symmetryCounterparts)
         {
@@ -427,15 +427,15 @@ class FSBDwheel : PartModule
             if (wheel != null)
             {
                 wheel.motorEnabled = motorEnabled;
-                wheel.motorToggleElement.buttons[0].toggle(motorEnabled);
+                wheel.motorToggleElement.buttons[0].Toggle(motorEnabled);
             }
         }
     }
 
-    private void popupToggleReverseMotor()
+    private void PopupToggleReverseMotor()
     {
         motorStartsReversed = !motorStartsReversed;
-        motorReverseElement.buttons[0].toggle(motorStartsReversed);
+        motorReverseElement.buttons[0].Toggle(motorStartsReversed);
 
         foreach (Part p in part.symmetryCounterparts)
         {
@@ -443,12 +443,12 @@ class FSBDwheel : PartModule
             if (wheel != null)
             {
                 wheel.motorStartsReversed = motorStartsReversed;
-                wheel.motorReverseElement.buttons[0].toggle(motorStartsReversed);
+                wheel.motorReverseElement.buttons[0].Toggle(motorStartsReversed);
             }
         }
     }
 
-    private void popupUpdateSuspension()
+    private void PopupUpdateSuspension()
     {
         overrideModelSpringValues = true;
         wheelColliderRadius = float.Parse(wheelRadiusElement.inputText);
@@ -463,22 +463,22 @@ class FSBDwheel : PartModule
 
     #endregion
 
-    public void setBrakeLight(bool _brakesEngaged)
+    public void SetBrakeLight(bool _brakesEngaged)
     {
-        if (disableColliderWhenRetracted && deploymentStateEnum == DeploymentStates.Retracted)
+        if (disableColliderWhenRetracted && DeploymentStateEnum == DeploymentStates.Retracted)
         {
-            setBrakeLight(BrakeStatus.disabled);
+            SetBrakeLight(BrakeStatus.disabled);
         }
         else
         {
             if (_brakesEngaged)
-                setBrakeLight(BrakeStatus.on);
+                SetBrakeLight(BrakeStatus.on);
             else
-                setBrakeLight(BrakeStatus.off);            
+                SetBrakeLight(BrakeStatus.off);            
         }        
     }
 
-    public void setBrakeLight(BrakeStatus status)
+    public void SetBrakeLight(BrakeStatus status)
     {
         if (brakeEmissiveObject != null)
         {
@@ -515,7 +515,7 @@ class FSBDwheel : PartModule
     {
         try
         {
-            deploymentStateEnum = (DeploymentStates)Enum.Parse(typeof(DeploymentStates), deploymentState);
+            DeploymentStateEnum = (DeploymentStates)Enum.Parse(typeof(DeploymentStates), deploymentState);
         }
         catch
         {
@@ -530,7 +530,7 @@ class FSBDwheel : PartModule
             hasAnimation = true;
             anim[animationName].layer = animationLayer;
             float startAnimTime = 0f;
-            if (deploymentStateEnum == DeploymentStates.Retracted)
+            if (DeploymentStateEnum == DeploymentStates.Retracted)
             {
                 startAnimTime = 1f;
                 animSpeed = 1f * customAnimationSpeed;
@@ -628,7 +628,7 @@ class FSBDwheel : PartModule
 
             if (disableColliderWhenRetracted)
             {
-                if (deploymentStateEnum == DeploymentStates.Retracted)
+                if (DeploymentStateEnum == DeploymentStates.Retracted)
                 {
                     wheelList.enabled = false;
                 }
@@ -667,7 +667,7 @@ class FSBDwheel : PartModule
 
             #region GUI popup
 
-            popup = new FSGUIPopup(part, "FSBDwheel", moduleID, FSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Suspension Settings:"));
+            popup = new BDFSGUIPopup(part, "FSBDwheel", moduleID, BDFSGUIwindowID.wheel, new Rect(500f, 300f, 250f, 100f), "Wheel settings", new PopupElement("Suspension Settings:"));
             popup.useInFlight = true;
             wheelRadiusElement = new PopupElement("Radius", wheelColliderRadius.ToString());
             suspensionDistanceElement = new PopupElement("Distance", wheelColliderSuspensionDistance.ToString());
@@ -680,7 +680,7 @@ class FSBDwheel : PartModule
             popup.sections[0].elements.Add(suspensionDamperElement);
             popup.sections[0].elements.Add(suspensionTargetPositionElement);
             
-            suspensionUpdateElement = new PopupElement(new PopupButton("Update", 0f, popupUpdateSuspension));
+            suspensionUpdateElement = new PopupElement(new PopupButton("Update", 0f, PopupUpdateSuspension));
             popup.sections[0].elements.Add(suspensionUpdateElement);
 
             #endregion
@@ -689,7 +689,7 @@ class FSBDwheel : PartModule
             {
                 brakeEmissiveObject = part.FindModelTransform(brakeEmissiveObjectName);
             }
-            setBrakeLight(brakesEngaged);
+            SetBrakeLight(brakesEngaged);
 
             #region set up fx
             if (useCustomParticleFX)
@@ -790,28 +790,28 @@ class FSBDwheel : PartModule
 
     public void FixedUpdate()
     {
-        updateDeploymentState();        
+        UpdateDeploymentState();        
 
         if (!HighLogic.LoadedSceneIsFlight)
             return;        
         
-        destroyBoundsCollider();                
+        DestroyBoundsCollider();                
               
-        updateBrakeTorque();        
+        UpdateBrakeTorque();        
              
-        rotateWheelMeshes();        
+        RotateWheelMeshes();        
         
-        updateSuspension();        
+        UpdateSuspension();        
 
         #region Active vessel code        
 
         if (vessel.isActiveVessel && base.vessel.IsControllable)
         {
-            disableColliders();
+            DisableColliders();
 
-            updateMotors();
+            UpdateMotors();
 
-            updateDrag();            
+            UpdateDrag();            
         }
         #endregion        
     }
@@ -820,11 +820,11 @@ class FSBDwheel : PartModule
     {
         if (HighLogic.LoadedSceneIsFlight)
         {
-            checkSounds();
+            CheckSounds();
         }
     }
 
-    private void updateSuspension()
+    private void UpdateSuspension()
     {
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
@@ -846,7 +846,7 @@ class FSBDwheel : PartModule
         }
     }
 
-    private void rotateWheelMeshes()
+    private void RotateWheelMeshes()
     {
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
@@ -856,18 +856,18 @@ class FSBDwheel : PartModule
 
                 wheelList.wheels[i].wheelMesh.Rotate(wheelRotationAxis * rotation);
 
-                float deltaRPM = Mathf.Max(0f, Mathf.Abs(wheelList.wheels[i].getDeltaRPM()) - screechMindeltaRPM);
+                float deltaRPM = Mathf.Max(0f, Mathf.Abs(wheelList.wheels[i].GetDeltaRPM()) - screechMindeltaRPM);
                 if (deltaRPM > 0f && wheelList.wheels[i].wheelCollider.isGrounded)
                 {
-                    fireScreechEffect(i, deltaRPM);
+                    FireScreechEffect(i, deltaRPM);
                 }
 
-                updateScreechEffect(i);
+                UpdateScreechEffect(i);
             }
         }
     }
 
-    private void updateBrakeTorque()
+    private void UpdateBrakeTorque()
     {
         if (brakesEngaged || brakesLockedOn)
         {
@@ -883,7 +883,7 @@ class FSBDwheel : PartModule
         }
     }
 
-    private void destroyBoundsCollider()
+    private void DestroyBoundsCollider()
     {
         if (!boundsColliderRemoved)
         {
@@ -899,28 +899,28 @@ class FSBDwheel : PartModule
         }
     }
 
-    private void updateDeploymentState()
+    private void UpdateDeploymentState()
     {
         if (anim != null)
         {
 
             if (!anim.isPlaying)
             {
-                if (deploymentStateEnum == DeploymentStates.Deploying)
+                if (DeploymentStateEnum == DeploymentStates.Deploying)
                 {
-                    deploymentStateEnum = DeploymentStates.Deployed;
-                    setBrakeLight(brakesEngaged);
+                    DeploymentStateEnum = DeploymentStates.Deployed;
+                    SetBrakeLight(brakesEngaged);
                 }
-                else if (deploymentStateEnum == DeploymentStates.Retracting)
+                else if (DeploymentStateEnum == DeploymentStates.Retracting)
                 {
-                    deploymentStateEnum = DeploymentStates.Retracted;
-                    setBrakeLight(brakesEngaged);
+                    DeploymentStateEnum = DeploymentStates.Retracted;
+                    SetBrakeLight(brakesEngaged);
                 }
             }
         }
     }
 
-    private void disableColliders()
+    private void DisableColliders()
     {
         if (anim != null)
         {
@@ -928,7 +928,7 @@ class FSBDwheel : PartModule
 
             if (disableColliderWhenRetracted || disableColliderWhenRetracting) // runs OnStart too, so no need to run it in fixed update on non active vessels
             {
-                switch (deploymentStateEnum)
+                switch (DeploymentStateEnum)
                 {
                     case DeploymentStates.Retracted:
                         if (disableColliderWhenRetracted)
@@ -964,9 +964,9 @@ class FSBDwheel : PartModule
         }
     }
 
-    private void updateMotors()
+    private void UpdateMotors()
     {
-        if (hasMotor && motorEnabled && deploymentStateEnum == DeploymentStates.Deployed)
+        if (hasMotor && motorEnabled && DeploymentStateEnum == DeploymentStates.Deployed)
         {
             float speedModifier = Mathf.Max(0f, -(((float)vessel.horizontalSrfSpeed - maxSpeed) / maxSpeed));
             float throttleInput = vessel.ctrlState.wheelThrottle * speedModifier;
@@ -992,11 +992,11 @@ class FSBDwheel : PartModule
         }
     }
 
-    private void updateDrag()
+    private void UpdateDrag()
     {
         if (useDragUpdate)
         {
-            if (deploymentStateEnum == DeploymentStates.Deployed)
+            if (DeploymentStateEnum == DeploymentStates.Deployed)
             {
                 part.minimum_drag = deployedDrag;
                 part.maximum_drag = deployedDrag;
@@ -1009,7 +1009,7 @@ class FSBDwheel : PartModule
         }
     }
         
-    private void checkSounds()
+    private void CheckSounds()
     {
         for (int i = 0; i < wheelList.wheels.Count; i++)
         {
@@ -1017,14 +1017,14 @@ class FSBDwheel : PartModule
             if (isGrounded && !wheelList.wheels[i].oldIsGrounded)
             {
                 if (vessel.verticalSpeed < -1f)
-                    fireTouchdownThud();
+                    FireTouchdownThud();
             }
             wheelList.wheels[i].oldIsGrounded = isGrounded;
 
             if (isGrounded && vessel.horizontalSrfSpeed > 2f)
             {
-                fireRollSound();
-                fireBrakeSound(i);
+                FireRollSound();
+                FireBrakeSound(i);
             }
             else
             {
@@ -1034,25 +1034,25 @@ class FSBDwheel : PartModule
         }
     }
 
-    private void fireBrakeSound(int wheelNumber)
+    private void FireBrakeSound(int wheelNumber)
     {
         part.Effect("brakes", (wheelList.wheels[wheelNumber].wheelCollider.brakeTorque / brakeTorque) * Mathf.Clamp((float)vessel.horizontalSrfSpeed, 0f, 15f) / 15f);
         
     }
 
-    private void fireRollSound()
+    private void FireRollSound()
     {
         float rollLevel = Mathf.Clamp((float)vessel.horizontalSrfSpeed, 0f, 40f) / 40f;
         part.Effect("wheelRoll", rollLevel);                
     }
 
-    private void fireTouchdownThud()
+    private void FireTouchdownThud()
     {
         float thudLevel = Mathf.Clamp(-(float)vessel.verticalSpeed, 0f, 15f) / 15f;
         part.Effect("touchdownThud", thudLevel);
     }
 
-    private void fireScreechEffect(int wheelNumber, float deltaRPM)
+    private void FireScreechEffect(int wheelNumber, float deltaRPM)
     {
         fxLevel = Mathf.Clamp((float)vessel.horizontalSrfSpeed, 0f, 40f) / 40f;
         fxLevel *= deltaRPM / 200f;
@@ -1063,7 +1063,7 @@ class FSBDwheel : PartModule
         // play one shot audio                
     }
 
-    private void updateScreechEffect(int wheelNumber)
+    private void UpdateScreechEffect(int wheelNumber)
     {
         //KSP 1.8
         //if (wheelList.wheels[wheelNumber].screechCountdown > 0f)
@@ -1115,7 +1115,7 @@ class FSBDwheel : PartModule
             //    GUI.Label(new Rect(300f, 350f, 400f, 100f), "Screeech! grounded: " + wheelList.wheels[0].wheelCollider.isGrounded);
             //}            
             //wheelList.wheels[0].wheelCollider.isGrounded
-            popup.popup();
+            popup.Popup();
         }
     }
 
